@@ -1,0 +1,9 @@
+FishDumb`
+
+Things I need:
+ * Player fish
+ * Evil fish
+ * Nice fish
+ * eat nice, evil eats me
+ * random gen come in from edges
+ 
