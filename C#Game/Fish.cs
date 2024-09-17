@@ -5,14 +5,14 @@ using System.Windows.Forms;
 public class Fish
 {
     private static Random rng = new Random();
-    private Image fishPic;
-    public string fishType { get; set; }
-    public bool isAlive { get; set; }
-    public float x { get; set; }
-    public float y { get; set; }
-    public float dx { get; set; }
-    public float dy { get; set; }
-    public bool isSpedUp { get; set; }
+    public Image fishPic;
+    public string fishType;
+    public bool isAlive;
+    public float x;
+    public float y;
+    public float dx;
+    public float dy;
+    public bool isSpedUp;
 
     // Constructor for making the player
     public Fish(int i)
@@ -63,31 +63,31 @@ public class Fish
         {
             case 1:
                 x = 0;
-                dx = 10;
-                dy = (float)rng.Next(-10, 11);
+                dx = 50;
+                dy = (float)rng.Next(-20, 21);
                 break;
             case 2:
                 x = Window.width;
-                dx = -10;
-                dy = (float)rng.Next(-10, 11);
+                dx = -50;
+                dy = (float)rng.Next(-20, 21);
                 break;
             case 3:
                 y = 0;
-                dy = 10;
-                dx = (float)rng.Next(-10, 11);
+                dy = 50;
+                dx = (float)rng.Next(-20, 21);
                 break;
             default:
                 y = Window.height;
-                dy = -10;
-                dx = (float)rng.Next(-10, 11);
+                dy = -50;
+                dx = (float)rng.Next(-20, 21);
                 break;
         }
     }
 
     public bool isTouching(Fish other)
     {
-        Rectangle rect1 = new Rectangle((int)x, (int)y, fishPic.Width, fishPic.Height);
-        Rectangle rect2 = new Rectangle((int)other.x, (int)other.y, other.fishPic.Width, other.fishPic.Height);
+        Rectangle rect1 = new Rectangle((int)this.x, (int)this.y, 50, 50);
+        Rectangle rect2 = new Rectangle((int)other.x, (int)other.y, 50, 50);
         return rect1.IntersectsWith(rect2);
     }
 
@@ -96,23 +96,23 @@ public class Fish
         if (!this.isAlive)
         {
             // Sink the skeletons
-            y += -5 * dt;
-            x += rng.Next(-3, 3) * dt;
+            y += 25 * dt;
+            x += rng.Next(-10, 10) * dt;
         }
         else
         {
-            // Swim the fish
-            x += dx * dt;
-            y += dy * dt;
-            if (this.fishType == "player")
-            {
-                dx = dy = 0;
-            }
-            else if (rng.Next(0, 5) == 4)
+            // Swim the fish, but don't let player leave the screen
+            float d1 = dx * dt;
+            float d2 = dy * dt;
+            x += (x + d1 > 0 && x + d1 < Window.width 
+                || this.fishType != "player") ? d1 : 0;
+            y += (x + d2 > 0 && x + d2 < Window.width 
+                || this.fishType != "player") ? d2 : 0;
+            if (this.fishType != "player" && rng.Next(0, 5) == 4)
             {
                 // Randomize fish swimming to make fish swim fishy
-                dx += rng.Next(-7, 7);
-                dy += rng.Next(-7, 7);
+                dx += 10 * rng.Next(-7, 7);
+                dy += 10 * rng.Next(-7, 7);
             }
         }
     }

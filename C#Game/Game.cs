@@ -7,6 +7,7 @@ public class Game
 {
     private Fish player;
     private List<Fish> fishes;
+    private bool gameOver;
     public void Setup()
     {
         // make player
@@ -19,6 +20,24 @@ public class Game
     public void Update(float dt)
     {
         CheckTouches();
+
+        // prevent player from leaving screen
+        if (player.x < 50) {
+            player.x = 50;
+            player.dx = 0;
+        }
+        else if (player.x > Window.width - 100) {
+            player.x = Window.width - 100;
+            player.dx = 0;
+        }
+        if (player.y < 50) {
+            player.y = 50;
+            player.dy = 0;
+        }
+        else if (player.y > Window.height - 100) {
+            player.y = Window.height - 100;
+            player.dy = 0;
+        }
 
         // if the player died, make the other fish scurry off screen
         if (!player.isAlive) {
@@ -38,20 +57,32 @@ public class Game
             }
 
             // 1 in 10 chance of adding a new fish
-            if (RandomRange(0, 10) == 0) {
+            if ((new Random()).Next(0, 10) == 0) {
             fishes.Add(new Fish());
             }
         }
         
         // remove fish not on screen
-        fishes.RemoveAll(fish => !fish.IsOnScreen());
+        fishes.RemoveAll(fish => !IsOnScreen(fish));
+
+        // check if game over
+        if ( !player.isAlive && fishes.Count > 0) {
+            gameOver = true;
+        }
     }
 
     public void Draw(Graphics g)
     {
-        player.Draw(Graphics g);
-        foreach (Fish f in fishes) {
-            f.Draw(Graphics g);
+        if (!gameOver){
+            player.Draw(g);
+            foreach (Fish f in fishes) {
+                f.Draw(g);
+            }
+        }
+        else {
+            // draw game over screen
+            Pen pen = new Pen(Color.Black, 3);
+            g.DrawRectangle(pen, new Rectangle(0, 0, 200, 150));
         }
     }
 
@@ -67,20 +98,23 @@ public class Game
     {
         if (key.KeyCode == Keys.D || key.KeyCode == Keys.Right)
         {
-            player.dx = 10;
+            player.dx += 50;
         }
         else if (key.KeyCode == Keys.A || key.KeyCode == Keys.Left)
         {
-            player.dx = 10;
+            player.dx += -50;
         }
-        // allow for diagonal movement
-        if (key.KeyCode== Keys.S || key.KeyCode == Keys.Down)
+        else if (key.KeyCode== Keys.S || key.KeyCode == Keys.Down)
         {
-            player.dy = 10;
-        } 
+            player.dy += 50;
+        }
+        
         else if (key.KeyCode == Keys.W || key.KeyCode == Keys.Up)
         {
-            player.dy = -10;
+            player.dy += -50;
+        }
+        else if (key.KeyCode == Keys.Enter) {
+            Setup();
         }
     }
 
@@ -88,8 +122,8 @@ public class Game
     * Check if fish is within the window
     */
     private bool IsOnScreen(Fish f) {
-        w = f.fishPic.width;
-        h = f.fishPic.height;
+        float w = f.fishPic.Width;
+        float h = f.fishPic.Height;
         return f.x > -1 * w && f.x < Window.width && 
             f.y > -1 * h && f.y < Window.height;
     }
@@ -101,6 +135,7 @@ public class Game
             }
             else if (f.isTouching(player) && f.fishType == "niceFish") {
                 f.isAlive = false;
+                f.fishType = "fishBones";
             }
         }
     }
