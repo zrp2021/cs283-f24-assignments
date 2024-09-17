@@ -86,6 +86,7 @@ public class Game
             // draw game over screen
             Pen pen = new Pen(Color.Black, 3);
             g.DrawRectangle(pen, new Rectangle(0, 0, 200, 150));
+            DrawString("Game Over!\n\nPress enter \nto restart", 0, 0, g);
         }
     }
 
@@ -141,5 +142,12 @@ public class Game
                 f.fishType = "fishBones";
             }
         }
+    }
+
+    // inspired by https://learn.microsoft.com/en-us/dotnet/desktop/winforms/advanced/how-to-draw-text-on-a-windows-form?view=netframeworkdesktop-4.8
+    public void DrawString(string text, float x, float y, Graphics g)
+    {
+        g.DrawString(text, new Font("Arial", 16), 
+            new SolidBrush(Color.Red), x, y, new StringFormat());
     }
 }
