@@ -26,16 +26,16 @@ public class Game
             player.x = 50;
             player.dx = 0;
         }
-        else if (player.x > Window.width - 100) {
-            player.x = Window.width - 100;
+        else if (player.x > Window.width - 50) {
+            player.x = Window.width - 50;
             player.dx = 0;
         }
-        if (player.y < 50) {
-            player.y = 50;
+        if (player.y < 0) {
+            player.y = 0;
             player.dy = 0;
         }
-        else if (player.y > Window.height - 100) {
-            player.y = Window.height - 100;
+        else if (player.y > Window.height - 50) {
+            player.y = Window.height - 50;
             player.dy = 0;
         }
 
@@ -73,6 +73,9 @@ public class Game
 
     public void Draw(Graphics g)
     {
+        g.DrawImage(Image.FromFile("FishAssets/scene.png"), 0, 0, 
+            Window.width, Window.height);
+
         if (!gameOver){
             player.Draw(g);
             foreach (Fish f in fishes) {
