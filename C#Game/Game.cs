@@ -8,12 +8,14 @@ public class Game
     private Fish player;
     private List<Fish> fishes;
     private bool gameOver;
+    private int score;
     public void Setup()
     {
         // make player
         player = new Fish(1);
         fishes = new List<Fish>();
         gameOver = false;
+        score = 0;
 
     }
 
@@ -43,12 +45,13 @@ public class Game
         if (!player.isAlive) {
             foreach (Fish f in fishes) {
                 if (!f.isSpedUp && f.isAlive) {
-                    f.dx *= 5;
-                    f.dy *= 5;
+                    f.dx *= 15;
+                    f.dy *= 15;
                     f.isSpedUp = true;
                 }
                 f.Update(dt);
             }
+            player.Update(dt);
         }
         else {
             player.Update(dt);
@@ -56,9 +59,9 @@ public class Game
                 f.Update(dt);
             }
 
-            // 1 in 10 chance of adding a new fish
-            if ((new Random()).Next(0, 10) == 0) {
-            fishes.Add(new Fish());
+            // 1 in 5 chance of adding a new fish
+            if ((new Random()).Next(0, 5) == 0) {
+                fishes.Add(new Fish());
             }
         }
         
@@ -76,18 +79,20 @@ public class Game
         g.DrawImage(Image.FromFile("FishAssets/scene.png"), 0, 0, 
             Window.width, Window.height);
 
-        if (!gameOver){
-            player.Draw(g);
-            foreach (Fish f in fishes) {
-                f.Draw(g);
-            }
+        foreach (Fish f in fishes) {
+            f.Draw(g);
         }
-        else {
+        player.Draw(g);
+
+        if (gameOver){
             // draw game over screen
-            Pen pen = new Pen(Color.Black, 3);
-            g.DrawRectangle(pen, new Rectangle(0, 0, 200, 150));
-            DrawString("Game Over!\n\nPress enter \nto restart", 0, 0, g);
+            // Pen pen = new Pen(Color.Black, 3);
+            // g.DrawRectangle(pen, new Rectangle(0, 0, 200, 150));
+            DrawString("Game Over!\n\nPress enter to restart", 
+                (float)(Window.width * .5) - 100, (float)(Window.height * .5) - 100, g);
         }
+
+        DrawString("Score: " + score, 25, 25, g);
     }
 
     public void MouseClick(MouseEventArgs mouse)
@@ -140,6 +145,7 @@ public class Game
             else if (f.isTouching(player) && f.fishType == "niceFish") {
                 f.isAlive = false;
                 f.fishType = "fishBones";
+                score++;
             }
         }
     }
